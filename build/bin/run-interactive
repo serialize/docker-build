@@ -1,0 +1,4 @@
+#!/bin/bash
+. $(dirname $0)/set-env
+image=$(get-image-name $1 $2)
+docker run -i -t --entrypoint="/bin/bash" $image -i

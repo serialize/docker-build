@@ -1,0 +1,6 @@
+#!/bin/bash
+. $(dirname $0)/set-env
+cache="/var/cache/pacman/pkg/"
+param="$cache:$cache:rw"
+image=$(get-image-name $1 $2)
+docker run -i -t -v $param --entrypoint="/bin/bash" $image -i
