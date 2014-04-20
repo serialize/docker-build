@@ -1,0 +1,3 @@
+#!/bin/bash
+pacman -Sy
+pacman -U --noconfirm $@
