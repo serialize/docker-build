@@ -1,3 +1,0 @@
-#!/bin/bash
-. $(dirname $0)/set-env
-printf "%s/%s/%s" $BUILD_DIR $1 $2

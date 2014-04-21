@@ -1,3 +1,0 @@
-#!/bin/bash
-. $(dirname $0)/set-env
-printf "%s/%s-%s" $DOCKER_USER $1 $2
