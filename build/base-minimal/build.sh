@@ -1,15 +1,18 @@
 #!/bin/bash
 (( EUID != 0 )) && 'This script must be run as root.'
 
-. $(dirname $0)/set-env
 set -e
 
-workdir=$(basename $0)-$RANDOM
-buildir=$BUILD_DIR/base/minimal
+builddir=$(dirname $0)
+workdir=$builddir/build-$RANDOM
+imgname=serialize/base-minimal
+if [ ! -z "$1" ];then
+	imgname=$1
+fi
 
 mkdir -p "$workdir"
 
-pacstrap -C $buildir/pacstrap.conf -c -G -M -d "$workdir" bash bzip2 coreutils file filesystem findutils gawk gcc-libs gettext glibc grep gzip inetutils iputils iproute2 less pacman perl procps-ng psmisc sed shadow tar texinfo util-linux which supervisor haveged
+pacstrap -C $builddir/pacstrap.conf -c -G -M -d "$workdir" bash bzip2 coreutils file filesystem findutils gawk gcc-libs gettext glibc grep gzip inetutils iputils iproute2 less pacman perl procps-ng psmisc sed shadow tar texinfo util-linux which supervisor haveged
 
 # clear packages cache
 rm -f "$workdir/var/cache/pacman/pkg/"*
@@ -62,6 +65,6 @@ echo 'Server = http://mirrors.kernel.org/archlinux/$repo/os/$arch' > "$workdir/e
 # init keyring
 arch-chroot "$workdir" /bin/sh -c 'haveged -w 2048; pacman-key --init; pacman-key --populate archlinux; pkill haveged; pacman -Rcs --noconfirm haveged'
 
-tar --numeric-owner -C "$workdir" -c . | docker import - $DOCKER_USER/base-minimal
+tar --numeric-owner -C "$workdir" -c . | docker import - $imgname
 
 rm -rf "$workdir"
