@@ -1,2 +1,2 @@
 #!/bin/bash
-docker run -name my-owncloud-db serialize/owncloud-db true
+docker run -name sez-owncloud-db serialize/owncloud-db true

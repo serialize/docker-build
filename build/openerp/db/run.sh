@@ -1,2 +1,2 @@
 #!/bin/bash
-docker run -name my-openerp-db serialize/openerp-db true
+docker run -name sez-openerp-db serialize/openerp-db true

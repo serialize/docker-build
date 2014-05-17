@@ -1,2 +1,2 @@
 #!/bin/bash
-docker run -name my-sugarcrm-web serialize/sugarcrm-web true
+docker run -name sez-sugarcrm-web serialize/sugarcrm-web true

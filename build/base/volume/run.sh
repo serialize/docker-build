@@ -1,2 +1,2 @@
 #!/bin/bash
-docker run -name my-arch-volume serialize/arch-volume true
+docker run -name sez-arch-volume serialize/arch-volume true
