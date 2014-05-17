@@ -1,2 +1,2 @@
 #!/bin/bash
-docker run -name my-openerp-volume serialize/openerp-volume true
+docker run -name sez-openerp-volume serialize/openerp-volume true
