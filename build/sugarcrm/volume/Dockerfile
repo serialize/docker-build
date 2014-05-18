@@ -1,4 +1,4 @@
-FROM serialize/arch-minimal
+FROM serialize/arch-volume
 MAINTAINER Frank Binder docker@serialize.org
 
  
