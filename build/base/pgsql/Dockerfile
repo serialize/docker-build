@@ -14,4 +14,3 @@ EXPOSE 5432
 VOLUME  ["/etc/postgres", "/var/log/postgres", "/var/lib/postgres"]
 
 CMD ["/opt/run.sh"] 
-# CMD ["/usr/bin/postgres", "-D", "/var/lib/postgresql/data", "-c", "config_file=/etc/postgres/postgresql.conf"] 

@@ -3,33 +3,24 @@
 set -e
 
 
-PGSQL_USER=${PGSQL_USER:-"docker"}
-PGSQL_PASS=${PGSQL_PASS:-"docker"}
-PGSQL_DB=${PGSQL_DB:-"docker"}
-PGSQL_TEMPLATE=${PGSQL_TEMPLATE:-"DEFAULT"}
+PG_USER=${PG_USER:-"docker"}
+PG_PASS=${PG_PASS:-"docker"}
+PG_DB=${PG_DB:-"docker"}
+PG_TEMPLATE=${PG_TEMPLATE:-"DEFAULT"}
 
-PGSQL_BIN=/usr/bin/postgres
-PGSQL_CONFIG_DIR=/etc/postgres
-PGSQL_CONFIG_FILE=$PGSQL_CONFIG_DIR/postgres.conf
-PGSQL_HBA_FILE=$PGSQL_CONFIG_DIR/pg_hba.conf
-PGSQL_DATA_DIR=/var/lib/postgres/data
-PGSQL_RUN_DIR=/run/postgres
+PG_BIN=/usr/bin/postgres
+PG_CONFIG_DIR=/etc/postgres
+PG_CONFIG_FILE=$PG_CONFIG_DIR/postgres.conf
+PG_DATA_DIR=/var/lib/postgres/data
 
-PGSQL_SINGLE="$PGSQL_BIN --single --config-file=$PGSQL_CONFIG_FILE"
+PG_BIN_SINGLE="$PG_BIN --single --config-file=$PG_CONFIG_FILE"
 
-/usr/bin/initdb -D $PGSQL_DATA_DIR
+if [ ! -f $PG_DATA_DIR/PG_VERSION ]; then
+	/usr/bin/initdb -D $PG_DATA_DIR
+	$PG_BIN_SINGLE <<< "CREATE USER $PG_USER WITH SUPERUSER;" > /dev/null
+	$PG_BIN_SINGLE <<< "ALTER USER $PG_USER WITH PASSWORD '$PG_PASS';" > /dev/null
+	$PG_BIN_SINGLE <<< "CREATE DATABASE $PG_DB OWNER $PG_USER TEMPLATE $PG_TEMPLATE;" > /dev/null
+fi
 
-#if [ ! -d $PGSQL_DATA ]; then
-#mkdir -p $PGSQL_DATA
-#    chown -R postgres:postgres $PGSQL_DATA
-#    sudo -u postgres /usr/lib/postgresql/9.1/bin/initdb -D $PGSQL_DATA
-#    ln -s /etc/ssl/certs/ssl-cert-snakeoil.pem $PGSQL_DATA/server.crt
-#    ln -s /etc/ssl/private/ssl-cert-snakeoil.key $PGSQL_DATA/server.key
-#fi
-
-$PGSQL_SINGLE <<< "CREATE USER $PGSQL_USER WITH SUPERUSER;" > /dev/null
-$PGSQL_SINGLE <<< "ALTER USER $PGSQL_USER WITH PASSWORD '$PGSQL_PASS';" > /dev/null
-$PGSQL_SINGLE <<< "CREATE DATABASE $PGSQL_DB OWNER $PGSQL_USER TEMPLATE $PGSQL_TEMPLATE;" > /dev/null
-
-exec $PGSQL_BIN --config-file=$PGSQL_CONFIG_FILE
+exec $PG_BIN --config-file=$PG_CONFIG_FILE
 
