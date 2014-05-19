@@ -1,2 +1,2 @@
 #!/bin/bash
-docker build -t serialize/arch-php5 .
+docker build -t serialize/arch-php .

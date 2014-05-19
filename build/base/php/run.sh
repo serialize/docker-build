@@ -1,2 +1,2 @@
 #!/bin/bash
-docker run -name sez-arch-php5 serialize/arch-php5 true
+docker run -name sez-arch-php serialize/arch-php true
