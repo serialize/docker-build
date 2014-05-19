@@ -1,15 +1,17 @@
 FROM serialize/arch-minimal
 MAINTAINER Frank Binder docker@serialize.org
 
-RUN pacman -Sy postgresql --noconfirm && \
-    pacman -Scc --noconfirm
-    
-ADD opt/init.sh /opt/init
+ADD opt/ /opt/
 
-#USER postgres
+RUN chmod 0700 /opt/init.sh /opt/run.sh && \
+	/opt/init.sh && \
+	rm /opt/init.sh  
 
-#EXPOSE 5432
+USER postgres
 
-#VOLUME  ["/etc/postgresql", "/var/log/postgresql", "/var/lib/postgresql"]
+EXPOSE 5432
 
-#CMD ["/usr/lib/postgresql/9.3/bin/postgres", "-D", "/var/lib/postgresql/9.3/main", "-c", "config_file=/etc/postgresql/9.3/main/postgresql.conf"] 
+VOLUME  ["/etc/postgres", "/var/log/postgres", "/var/lib/postgres"]
+
+CMD ["/opt/run.sh"] 
+# CMD ["/usr/bin/postgres", "-D", "/var/lib/postgresql/data", "-c", "config_file=/etc/postgres/postgresql.conf"] 

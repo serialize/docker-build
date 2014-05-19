@@ -1,2 +1,2 @@
 #!/bin/bash
-docker run -name sez-arch-pgsql serialize/arch-pgsql true
+docker run -name sez-arch-pgsql -i -t serialize/arch-pgsql
