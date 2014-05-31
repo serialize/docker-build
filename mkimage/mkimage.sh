@@ -213,7 +213,7 @@ function build_image() {
   
    local PACKAGES="${BASH_PACKAGES[*]} ${PACMAN_PACKAGES[*]} ${EXTRA_PACKAGES[*]}"
    debug "installing packages..."
-   LC_ALL=C chroot "$BUILD_DIR" /usr/bin/pacman --noconfirm --arch $ARCH -Sy --force $PACKAGES
+   #LC_ALL=C chroot "$BUILD_DIR" /usr/bin/pacman --noconfirm --arch $ARCH -Sy --force $PACKAGES
      
    debug " configure dns"
    cp "/etc/resolv.conf" "$BUILD_DIR/etc/resolv.conf"
@@ -224,7 +224,7 @@ function build_image() {
    echo "Server = $REPO_URL/\$repo/os/$ARCH" >> "$BUILD_DIR/etc/pacman.d/mirrorlist"
 
    debug "starting haveged and init pacman-key"
-   LC_ALL=C chroot "$BUILD_DIR" /usr/bin/haveged -w 1024; /usr/bin/pacman-key --init; /usr/bin/pacman-key --populate archlinux
+   LC_ALL=C chroot "$BUILD_DIR" "$(/usr/bin/haveged -w 1024; /usr/bin/pacman-key --init; /usr/bin/pacman-key --populate archlinux)"
    debug "removing haveged"
    LC_ALL=C chroot "$BUILD_DIR" /usr/bin/pacman -Rs --noconfirm haveged;
 }
@@ -252,7 +252,7 @@ function main() {
    prepare_image
    configure_image
    build_image
-   finalize_image
+   #finalize_image
 }
 
 
@@ -308,10 +308,10 @@ function main_old() {
    rm -rf "$PACKDIR"     
 
    debug "pack content"
-   output="$SCRIPT_DIR/arch-minimal.tar.xz"
+   output="$SCRIPT_DIR/minimal.tar.xz"
    tar --xz -f "$output" --numeric-owner -C "$DEST" -c . 
    
-   docker_test_package "$output" "arch-minimal"
+   docker_test_package "$output" "minimal"
 
 } 
 
