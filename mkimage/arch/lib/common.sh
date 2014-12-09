@@ -20,6 +20,12 @@ function debug-n() {
    stderr-n "$@"; 
 }
 
+function function_exists() {
+   local FUNC=$1   
+   local RES=$(type -t $FUNC)
+   [ "$RES" == "function" ] && echo "1" || echo "0"
+}
+
 function get_dir() {
    local FILE=$1
    local DIRNAME=$( dirname "$FILE" )

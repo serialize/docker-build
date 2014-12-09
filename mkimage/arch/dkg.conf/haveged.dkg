@@ -1,0 +1,16 @@
+#!/bin/bash
+
+CORE_PACKAGES=(
+)
+EXTRA_PACKAGES=(
+   haveged
+)
+
+function pre_fetch() {
+   local BUILD=$1
+}
+
+function post_fetch() {
+   local BUILD=$1
+}
+

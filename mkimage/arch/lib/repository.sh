@@ -10,6 +10,9 @@ REPO_URL="$DEFAULT_REPO_URL"
 REPO_CORE_URL="$REPO_URL/core/os/$ARCH"
 REPO_EXTRA_URL="$REPO_URL/extra/os/$ARCH"
 
+REPO_CORE_PKGLIST=()
+REPO_EXTRA_PKGLIST=()
+
 # Extract href attribute from HTML link
 function extract_href() { 
     sed -n '/<a / s/^.*<a [^>]*href="\([^\"]*\)".*$/\1/p'; 
@@ -43,34 +46,89 @@ function fetch_pkglist() {
       { debug "Error: cannot fetch packages list: $REPO"; return 1; }
 }
 
-function download_package() {
-   local FILE=$1 SOURCE="$REPO/$FILE" DEST="$TMP_DIR/$FILE"
-   if [ ! -f $DEST ];then
-      fetch -O "$DEST" "$SOURCE"
-      copy_to_cache "$DEST"      
-   fi
+
+function get_file() {
+   local PACKAGE=$1 LIST=$2
+   echo $(grep_file "$LIST" "$PACKAGE")
 }
 
-function fetch_packages() {
-   local PACKAGES=$1 REPO=$2
-   #debug "fetching package list"
-   local LIST=$(fetch_pkglist $REPO)
-   for PACKAGE in $PACKAGES; do
-      local FILE=$(file_from_pkglist "$LIST" "$PACKAGE")      
-      debug "fetching $FILE"
-      $(copy_from_cache "$FILE")
-      $(download_package "$FILE")
-      $(uncompress_to_build "$FILE")
-      #VERSION=$(dump_package_name_version "$PACKAGE" "$FILE")
-      #echo $VERSION >> "$BUILD_DIR/.PKGLIST"
-  done
+function grep_file() {
+   local REPO_PACKAGES=$1 PACKAGE=$2
+   local FILE=$(echo "$REPO_PACKAGES" | grep -m1 "^$PACKAGE-[[:digit:]].*\(\.gz\|\.xz\)$")
 }
-function fetch_core_packages() {
-   local PACKAGES=$1
-   $(fetch_packages "$PACKAGES" "$REPO_CORE_URL")
+function find_in_listfile_bck() {
+   local FILE=$1 PACKAGE=$2
+   local RESULT=$(cat "$FILE" | grep "$PACKAGE" | grep -v "xz.sig")
+   echo "$RESULT"
 }
-function fetch_extra_packages() {
-   local PACKAGES=$1
-   $(fetch_packages "$PACKAGES" "$REPO_EXTRA_URL")
+function find_in_listfile2() {
+   local FILE=$1 PACKAGE=$2
+   local RESULT=$(cat "$FILE" | grep -m1 "^$PACKAGE-[[:digit:]].*\(\.gz\|\.xz\)$")
+   echo "$RESULT"
 }
+
+function find_in_listfile() {
+   local PACKAGE=$1 REPO_NAME=$2 
+   local FILE="$TMP_DIR/../$REPO_NAME.pkg.list"
+   local RESULT=$(cat "$FILE" | grep -m1 "^$PACKAGE-[[:digit:]].*\(\.gz\|\.xz\)$")
+   echo "$RESULT"
+}
+
+function find_in_list() {
+   local LIST=$1 PACKAGE=$2
+   local FILE=$(echo "${LIST[*]}" | grep -m1 "^$PACKAGE-[[:digit:]].*\(\.gz\|\.xz\)$")
+   echo $FILE
+}
+
+function search_file() {
+   local REPO_LIST=$1 FILE=$2
+   echo $(echo "$REPO_LIST" | grep -m1 "$FILE")
+}
+function search_package() {
+   local REPO_LIST=$1 PACKAGE=$2
+   echo $(echo "$REPO_LIST" | grep -m1 "^$PACKAGE-[[:digit:]].*\(\.gz\|\.xz\)$")
+}
+function download_file() {
+   local FILE=$1 DEST=$2 REPO_URL=$3 
+   [ ! -f "$DEST/$FILE" ] && fetch -O "$DEST/$FILE" "$REPO_URL/$FILE"
+}
+function download_package() {
+   local PACKAGE=$1 DEST=$2 REPO_NAME=$3 REPO_URL=$4
+   local FILE=$(find_in_listfile "$PACKAGE" "$REPO_NAME")
+   $(download_file "$FILE" "$DEST" "$REPO_URL")
+}
+#function download_package() {
+#   local FILE=$1 SOURCE="$REPO/$FILE" DEST="$TMP_DIR/$FILE"
+#   if [ ! -f $DEST ];then
+#      fetch -O "$DEST" "$SOURCE"
+#      copy_to_cache "$DEST"      
+#   fi
+#}
+#function download_core_package() {
+#   local PACKAGE=$1 DEST=$2
+#   local FILE=$(get_core_file "$PACKAGE")
+#   $(download_file "$FILE" "$DEST" "$REPO_CORE_URL")
+#}
+#function download_extra_package() {
+#   local PACKAGE=$1 DEST=$2
+#   local FILE=$(get_extra_file "$PACKAGE")
+#   $(download_file "$FILE" "$DEST" "$REPO_EXTRA_URL")
+#}
+
+function download_list() {
+   local REPO_NAME=$1 REPO_URL=$2 DEST=$3
+   local FILE="$DEST/$REPO_NAME.pkg.list"
+   local LIST=$(fetch_pkglist "$REPO_URL")
+   [ -f "$FILE" ] && rm $FILE
+   for PKG in $LIST; do
+      echo $PKG >> "$FILE"
+   done
+   echo "$FILE"
+}
+function read_list() {
+   local REPO_NAME=$1 SOURCE=$2
+   local FILE="$SOURCE/$REPO_NAME.pkg.list"
+   echo $(cat $FILE)
+}
+
 

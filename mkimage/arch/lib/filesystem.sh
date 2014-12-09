@@ -50,10 +50,65 @@ function validate_cache_dir() {
    [ -d "$CACHE" ] || mkdir "$CACHE"
 }
 
+function file_exists() {
+   local FILE=$1 DIR=$2
+   [ -f "$DIR/$FILE" ] && echo "1" || echo "0"
+}
+
+function temp_file_exists() {
+   local FILE=$1
+   echo $(file_exists "$FILE" "$TMP_DIR")
+}
+
+function cache_file_exists() {
+   local FILE=$1
+   echo $(file_exists "$FILE" "$CACHE_DIR")
+}
+
 function create_temp_dir() {
    local TEMP="$(mktemp -d)"
    echo $TEMP
 }
+
+function file_exists_temp_only() {
+   local FILE=$1
+   TEMP_CHECK=$(temp_file_exists "$FILE")
+   CACHE_CHECK=$(cache_file_exists "$FILE")
+   RESULT="0"
+   [[ "$TEMP_CHECK" == "1" ]] && [[ "$CACHE_CHECK" != "1" ]] && RESULT="1"
+   echo $RESULT
+   #   then
+   #      RESULT="1" 
+   #fi
+}
+
+function file_exists_cache_only() {
+   local FILE=$1
+   TEMP_CHECK=$(temp_file_exists "$FILE")
+   CACHE_CHECK=$(cache_file_exists "$FILE")
+   RESULT="0"
+   [[ "$TEMP_CHECK" != "1" ]] && [[ "$CACHE_CHECK" == "1" ]] && RESULT="1"
+   echo $RESULT
+}
+
+function file_exists_cache_and_temp() {
+   local FILE=$1
+   TEMP_CHECK=$(temp_file_exists "$FILE")
+   CACHE_CHECK=$(cache_file_exists "$FILE")
+   RESULT="0"
+   [[ "$TEMP_CHECK" == "1" ]] && [[ "$CACHE_CHECK" == "1" ]] && RESULT="1"
+   echo $RESULT
+}
+
+function file_exists_not() {
+   local FILE=$1
+   TEMP_CHECK=$(temp_file_exists "$FILE")
+   CACHE_CHECK=$(cache_file_exists "$FILE")
+   RESULT="0"
+   [[ "$TEMP_CHECK" != "1" ]] && [[ "$CACHE_CHECK" != "1" ]] && RESULT="1"
+   echo $RESULT
+}
+
 
 function create_temp_dir_bck() {
    local TEMP="$(mktemp -d)"

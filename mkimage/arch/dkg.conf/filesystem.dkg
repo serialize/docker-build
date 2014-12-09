@@ -1,0 +1,24 @@
+#!/bin/bash
+
+CORE_PACKAGES=(
+   iana-etc filesystem 
+)
+EXTRA_PACKAGES=(
+)
+
+function pre_fetch() {
+   local BUILD=$1
+}
+function post_fetch() {
+   local BUILD=$1
+   $(rebuild_dev_nodes "$BUILD")
+   $(build_etc "$BUILD")
+}
+
+function pre_unpack() {
+   local FILE=$1 PACKAGE=$2
+}
+function post_unpack() {
+   local FILE=$1 PACKAGE=$2
+}
+
