@@ -1,7 +1,5 @@
 #!/bin/sh
 
-apt-key adv --keyserver pool.sks-keyservers.net --recv-keys B97B0AFCAA1A47F044F244A07FCC7D46ACCC4CF8 
-
 echo deb http://http.debian.net/debian wheezy main contrib non-free > /etc/apt/sources.list.d/debian-wheezy.list
 /bin/rm /etc/apt/sources.list 
 
