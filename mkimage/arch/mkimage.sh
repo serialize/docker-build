@@ -55,13 +55,16 @@ function fetch() {
    wget -c --passive-ftp --quiet "$@"; 
 }
 
-# Extract FILEPATH gz/xz archive to DEST directory
+# Extract FILEPATH gz/xz archive to DEST directory#!/bin/bash
+
+set -e -u -o pipefail
+
 function uncompress() {
   local FILEPATH=$1 DEST=$2
   
   case "$FILEPATH" in
     *.gz) res=$(tar xzf "$FILEPATH" -C "$DEST" --exclude="/usr/share/man" >&2);;
-    *.xz) res=$(xz -dc "$FILEPATH" | tar x -C "$DEST" --exclude="/usr/share/man" >&2);;
+    *.xz) res=$(xz -dc "$FILEPATH" | tar x -C "$DEST" --exclude="/usr/share/man" 2> >(grep -v 'SCHILY.fflags' >&2));;
     *) debug "Error: unknown package format: $FILEPATH"
        return 1;;
   esac
@@ -79,7 +82,6 @@ function _fetch_packages() {
   debug " fetching package list..."
   debug " "
   local PACKAGES=$1 REPO=$2
-  
   local LIST=$(fetch_packages_list $REPO)
   for PACKAGE in $PACKAGES; do
     debug-n "--- "  
