@@ -1,7 +1,8 @@
 FROM serialize/debian:jessie
 MAINTAINER Frank Binder <docker@serialize.org>
 
-RUN echo deb http://ftp.debian.org/debian experimental main > /etc/apt/sources.list.d/experimental.list \
+RUN apt-key adv --keyserver pool.sks-keyservers.net --recv-keys B97B0AFCAA1A47F044F244A07FCC7D46ACCC4CF8 \
+    && echo deb http://ftp.debian.org/debian experimental main > /etc/apt/sources.list.d/experimental.list \
     && apt-get update \
     && apt-get -t experimental install -y --no-install-recommends postgresql \
 	&& sed -i "s|/var/run/postgresql/9.4-main.pg_stat_tmp|/var/run/postgresql|g" /etc/postgresql/9.4/main/postgresql.conf
