@@ -106,7 +106,7 @@ fi
 
 DKG=$(compress_build $ACTION)
 BCK="$SCRIPT_DIR/dkg"
-cp $DKG "$BCK/$ACTION.dkg.tar.xz"
+#cp $DKG "$BCK/$ACTION.dkg.tar.xz"
 mv $DKG "$OUTPUT_DIR/$ACTION/assets.dkg.tar.xz"
 
 debug " "
