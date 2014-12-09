@@ -82,6 +82,7 @@ if [ ${#CORE_PACKAGES[@]} -gt 0 ]
    then
       debug " "
       debug " [core] $REPO_CORE_URL"
+      debug " "
       RESULT=$(download_list "core" "$REPO_CORE_URL" "$TMP_DIR/..")
       LIST=$(read_list "core" "$TMP_DIR/..")
       for PACKAGE in ${CORE_PACKAGES[*]}; do
@@ -93,6 +94,7 @@ if [ ${#EXTRA_PACKAGES[@]} -gt 0 ]
    then 
       debug " "
       debug " [extra] $REPO_EXTRA_URL"
+      debug " "
       RESULT=$(download_list "extra" "$REPO_EXTRA_URL" "$TMP_DIR/..")
       LIST=$(read_list "extra" "$TMP_DIR/..")
       for PACKAGE in ${EXTRA_PACKAGES[*]}; do

@@ -20,5 +20,7 @@ function pre_unpack() {
 }
 function post_unpack() {
    local FILE=$1 PACKAGE=$2
+   cp "/etc/resolv.conf" "$BUILD_DIR/etc/resolv.conf"
+   
 }
 

@@ -19,5 +19,13 @@ function pre_unpack() {
 }
 function post_unpack() {
    local FILE=$1 PACKAGE=$2
+   if [ "$PACKAGE" == "pacman" ]
+      then
+         sed -i "s/^[[:space:]]*\(CheckSpace\)/# \1/" "$BUILD_DIR/etc/pacman.conf"
+         sed -i "s/^[[:space:]]*SigLevel[[:space:]]*=.*$/SigLevel = Never/" "$BUILD_DIR/etc/pacman.conf"
+         sed -i "s/^[[:space:]]*#IgnorePkg[[:space:]]*=.*$/IgnorePkg = filesystem/" "$BUILD_DIR/etc/pacman.conf"
+         mkdir -p "$BUILD_DIR/etc/pacman.d/"
+         echo "Server = $REPO_URL/\$repo/os/$ARCH" >> "$BUILD_DIR/etc/pacman.d/mirrorlist"
+   fi
 }
 
