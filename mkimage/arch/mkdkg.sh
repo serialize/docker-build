@@ -4,7 +4,7 @@ set -e -u -o pipefail
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source $SCRIPT_DIR/utils/include.sh
 
-OUTPUT_DIR="$SCRIPT_DIR/dkg"
+OUTPUT_DIR="$SCRIPT_DIR/../../build/base/arch"
 PARENT_DIR=$(create_temp_dir)
 TMP_DIR="$PARENT_DIR/temp"
 BUILD_DIR="$PARENT_DIR/build"
@@ -52,7 +52,7 @@ case $ACTION in
 esac
 
 DKG=$(compress_build $ACTION)
-mv $DKG $OUTPUT_DIR
+mv $DKG "$OUTPUT_DIR/$ACTION/assets.dkg.tar.xz
 
 debug " "
 #debug "-----------------------------------------------------------"
