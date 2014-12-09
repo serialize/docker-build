@@ -37,11 +37,8 @@ case $ACTION in
    perl) 
       $(fetch_core_packages "perl")
       ;;
-   utils) 
-      $(fetch_core_packages "bzip2 keyutils libarchive xz zlib")
-      ;;
    pacman) 
-      $(fetch_core_packages "archlinux-keyring gpgme libassuan krb5 libgpg-error libssh2 openssl pacman pacman-mirrorlist")
+      $(fetch_core_packages "archlinux-keyring bzip2 keyutils libarchive gpgme libassuan krb5 libgpg-error libssh2 openssl pacman pacman-mirrorlist xz zlib")
       ;;
    *)
       $(fetch_core_packages "iana-etc filesystem")
@@ -52,7 +49,7 @@ case $ACTION in
 esac
 
 DKG=$(compress_build $ACTION)
-mv $DKG "$OUTPUT_DIR/$ACTION/assets.dkg.tar.xz
+mv $DKG "$OUTPUT_DIR/$ACTION/assets.dkg.tar.xz"
 
 debug " "
 #debug "-----------------------------------------------------------"
