@@ -1,3 +1,6 @@
+#
+# TO serialize/arch:bash
+#
 FROM serialize/arch:glibc
 MAINTAINER Frank Binder <docker@serialize.org>
 
