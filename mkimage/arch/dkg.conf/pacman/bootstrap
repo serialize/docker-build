@@ -1,0 +1,32 @@
+#!/bin/sh
+
+REPO_URL="http://mirrors.kernel.org/archlinux"
+ARCH=`uname -m`
+FILESYSTEM_PKG=(iana-etc)
+GLIBC_PKG=(linux-api-headers tzdata glibc)
+BASH_PKG=(acl attr curl expat e2fsprogs ncurses readline bash shadow)
+PERL_PKG=(perl)
+PACMAN_PKG=(archlinux-keyring bzip2 keyutils libarchive gpgme libassuan krb5 libgpg-error libssh2 openssl pacman pacman-mirrorlist xz zlib)
+
+function _pacman_config() {
+	sed -i "s/^[[:space:]]*\(CheckSpace\)/# \1/" "/etc/pacman.conf"
+	sed -i "s/^[[:space:]]*SigLevel[[:space:]]*=.*$/SigLevel = Never/" "/etc/pacman.conf"
+	sed -i "s/^[[:space:]]*#IgnorePkg[[:space:]]*=.*$/IgnorePkg = filesystem/" "/etc/pacman.conf"
+	mkdir -p "/etc/pacman.d/"
+	echo "Server = $REPO_URL/\$repo/os/$ARCH" >> "/etc/pacman.d/mirrorlist"
+}
+function _pacman_init() {
+	/usr/bin/haveged -w 1024
+	/usr/bin/pacman-key --init
+	/usr/bin/pacman-key --populate archlinux
+	/usr/bin/pacman -Rs --noconfirm haveged
+}
+
+function _pacman_setup() {
+	/usr/bin/pacman --noconfirm --arch $ARCH -Sy --force "${FILESYSTEM_PKG[*]} ${GLIBC_PKG[*]} ${BASH_PKG[*]} ${PERL_PKG[*]} ${PACMAN_PKG[*]}"
+}
+
+_pacman_config
+_pacman_init
+_pacman_setup
+_pacman_config

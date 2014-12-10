@@ -21,11 +21,26 @@ function post_unpack() {
    local FILE=$1 PACKAGE=$2
    if [ "$PACKAGE" == "pacman" ]
       then
-         sed -i "s/^[[:space:]]*\(CheckSpace\)/# \1/" "$BUILD_DIR/etc/pacman.conf"
-         sed -i "s/^[[:space:]]*SigLevel[[:space:]]*=.*$/SigLevel = Never/" "$BUILD_DIR/etc/pacman.conf"
-         sed -i "s/^[[:space:]]*#IgnorePkg[[:space:]]*=.*$/IgnorePkg = filesystem/" "$BUILD_DIR/etc/pacman.conf"
-         mkdir -p "$BUILD_DIR/etc/pacman.d/"
-         echo "Server = $REPO_URL/\$repo/os/$ARCH" >> "$BUILD_DIR/etc/pacman.d/mirrorlist"
+      	_pacman_config
+      	_pacman_bootstrap
    fi
 }
 
+function _pacman_config() {
+	sed -i "s/^[[:space:]]*\(CheckSpace\)/# \1/" "$BUILD_DIR/etc/pacman.conf"
+	sed -i "s/^[[:space:]]*SigLevel[[:space:]]*=.*$/SigLevel = Never/" "$BUILD_DIR/etc/pacman.conf"
+	sed -i "s/^[[:space:]]*#IgnorePkg[[:space:]]*=.*$/IgnorePkg = filesystem/" "$BUILD_DIR/etc/pacman.conf"
+	mkdir -p "$BUILD_DIR/etc/pacman.d/"
+	echo "Server = $REPO_URL/\$repo/os/$ARCH" >> "$BUILD_DIR/etc/pacman.d/mirrorlist"
+}
+
+function _pacman_bootstrap() {
+	local BS="$BUILD_DIR/bootstrap"
+	echo "#!/bin/sh
+/usr/bin/haveged -w 1024
+/usr/bin/pacman-key --init
+/usr/bin/pacman-key --populate archlinux
+/usr/bin/pacman -Rs --noconfirm haveged
+" >> $BS
+	chmod +x $BS
+}

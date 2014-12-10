@@ -1,0 +1,5 @@
+#!/bin/sh
+
+pacman -Syy
+pacman -S --noconfirm $1
+pacman -Scc --noconfirm 
