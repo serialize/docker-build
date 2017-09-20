@@ -19,6 +19,6 @@ RUN apt-get update -qq &&  \
 
 RUN pip install --upgrade pip
 
-COPY ./requirements.txt /opt/release/requirements.txt
+COPY requirements.txt /opt/release/requirements.txt
 
 RUN pip install -r /opt/release/requirements.txt
